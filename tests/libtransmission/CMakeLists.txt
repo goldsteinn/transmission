@@ -1,3 +1,6 @@
+
+add_executable(bench-test
+  bench-test.cc)
 add_executable(libtransmission-test
     announce-list-test.cc
     announcer-test.cc
@@ -63,6 +66,33 @@ target_link_libraries(libtransmission-test
         ${TR_NAME}
         gtestall)
 
+
+
+target_compile_definitions(bench-test
+    PRIVATE
+        -DLIBTRANSMISSION_TEST_ASSETS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        __TRANSMISSION__)
+
+target_include_directories(bench-test
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/libtransmission
+        ${CMAKE_BINARY_DIR}/libtransmission)
+
+target_include_directories(bench-test SYSTEM
+    PRIVATE
+        ${CURL_INCLUDE_DIRS}
+        ${EVENT2_INCLUDE_DIRS})
+
+target_compile_options(bench-test
+    PRIVATE
+        ${CXX_WARNING_FLAGS}
+        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wno-sign-compare>) # patches welcomed
+
+target_link_libraries(bench-test
+    PRIVATE
+        ${TR_NAME})
+
+      
 add_test(
     NAME libtransmission-test
     COMMAND libtransmission-test)
